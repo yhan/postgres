@@ -39,7 +39,7 @@ WHERE r.rolname !~ '^pg_'
 ORDER BY 1;
 
 
--- 2. which user have what privileges
+-- 2. which user have what privileges on table
 SELECT *
 FROM information_schema.role_table_grants
 WHERE table_name='tbhello';
@@ -71,14 +71,22 @@ SELECT * FROM pg_roles WHERE rolname !~ '^pg_';
 
 -- who is super user
 SELECT rolname FROM pg_roles WHERE rolsuper;
+SELECT * FROM pg_roles;
 
-
+-- 6. How grant role to user
+-- Case 1) Grant from a user!= role
 -- only member of a role and having "admin option" can grant role to another user ?
 -- ** do this with superuser 'postgres' **
 create role readonly;
 grant readonly to myuser3 with admin option;
 -- Then, myuser3 can do the grant
 grant readonly to myuser2;
+-- Case 2) Role with login capacity
+-- login with the role, then do grant directly
+-- // alice is a role: CREATE ROLE alice LOGIN PASSWORD 'alice';
+-- login with alice then do
+grant alice to myuser;
+
 
 -- list all schemas
 -- and you will see the schema owner
