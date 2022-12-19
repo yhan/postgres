@@ -17,7 +17,10 @@ this is where the cluster is generated:
 don't foget modify port to avoid port conflict: .\pgsql_data\postgresql.conf
 
 start the cluster:
+```
+# start cluster
 pg_ctl.exe -D C:\pgsql_data -l logfile start
+```
 
 
 
