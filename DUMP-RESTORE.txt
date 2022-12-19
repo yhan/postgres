@@ -1,0 +1,25 @@
+
+1. DUMP DB
+C:\yi\postgresv15\bin>pg_dump -h localhost -p 5444 -U postgres -W -Fc OrdersDB > dborder.dump
+Password:
+
+
+2. CREATE NEW DB fromdump
+C:\yi\postgresv15\bin>createdb -h localhost -p 5444 -U postgres -W fromdump
+
+
+3. RESTORE fromdump from DUMP FILE dborder.dump
+C:\yi\postgresv15\bin>pg_restore -C -d fromdump -v -h localhost -p 5444 -U postgres dborder.dump
+
+pg_restore: connecting to database for restore
+Password:
+pg_restore: creating DATABASE "OrdersDB"
+pg_restore: connecting to new database "OrdersDB"
+pg_restore: creating SCHEMA "daily"
+pg_restore: creating TABLE "daily.MarketOrderVms"
+pg_restore: creating TABLE "daily.__EFMigrationsHistory"
+pg_restore: processing data for table "daily.MarketOrderVms"
+pg_restore: processing data for table "daily.__EFMigrationsHistory"
+pg_restore: creating CONSTRAINT "daily.MarketOrderVms PK_MarketOrderVms"
+pg_restore: creating CONSTRAINT "daily.__EFMigrationsHistory PK___EFMigrationsHistory"
+pg_restore: creating INDEX "daily.IX_MarketOrderVms_InstanceId"
