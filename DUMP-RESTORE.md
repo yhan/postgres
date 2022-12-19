@@ -1,5 +1,11 @@
 
 1. DUMP DB
+pg_dump
+
+-F, --format=c|d|t|p         output file format (custom, directory, tar,
+                               plain text (default))
+ -c, --clean                  clean (drop) database objects before recreating
+                               
 C:\yi\postgresv15\bin>pg_dump -h localhost -p 5444 -U postgres -W -Fc OrdersDB > dborder.dump
 Password:
 
@@ -23,3 +29,16 @@ pg_restore: processing data for table "daily.__EFMigrationsHistory"
 pg_restore: creating CONSTRAINT "daily.MarketOrderVms PK_MarketOrderVms"
 pg_restore: creating CONSTRAINT "daily.__EFMigrationsHistory PK___EFMigrationsHistory"
 pg_restore: creating INDEX "daily.IX_MarketOrderVms_InstanceId"
+
+
+
+Restore DB using psql is by running script:
+
+backup:
+--create: with create db instruction:
+
+C:/yi/postgresv15/bin/pg_dump.exe --dbname=hello --schema-only --file=C:\Users\hanyi\postgres_localhost_v15_port5444-2022_12_19_15_10_54-dump-onlyschema.sql --create --username=postgres --host=localhost --port=5444
+
+
+restore:
+psql -h localhost -p 5444 -U postgres -W -d hello --file="C:\Users\hanyi\postgres_localhost_v15_port5444-2022_12_19_12_35_57-dump-onlyschema.sql"
