@@ -41,4 +41,10 @@ C:/yi/postgresv15/bin/pg_dump.exe --dbname=hello --schema-only --file=C:\Users\h
 
 
 restore:
+-d: you have to create the DB in advance.
 psql -h localhost -p 5444 -U postgres -W -d hello --file="C:\Users\hanyi\postgres_localhost_v15_port5444-2022_12_19_12_35_57-dump-onlyschema.sql"
+
+> psql.exe shouts "databse hello does not exist" when it connects and find that `hello` does not exist
+so better do not pg_dump with --create option
+and run without '-d hello'
+psql -h localhost -p 5444 -U postgres -W --file="C:\Users\hanyi\postgres_localhost_v15_port5444-2022_12_19_12_35_57-dump-onlyschema.sql"
