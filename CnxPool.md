@@ -48,7 +48,16 @@
     ![image](https://user-images.githubusercontent.com/760399/209583836-84db0328-1b86-4a98-b4e8-520464801793.png)
     10 idle connections die only after killed the process.
 
-    
+
+3. Played pruning extra connections beyond Minimum Pool Size
+   `Minimum Pool Size=5;Connection Idle Lifetime=5;Connection Pruning Interval=2;`
+   
+
+   As I started 10 tasks keeping alive connections for 10 sec.
+   after 10 sec + 5 sec, 5 extra connections are pruned  
+   Pool keep 5 connections:
+   ![image](https://user-images.githubusercontent.com/760399/209584905-4fea0505-62d3-4d09-abc1-613ea1211dfe.png)
+
     
     
 
