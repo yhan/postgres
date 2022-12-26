@@ -40,3 +40,15 @@
     cnt=0
 
     ```
+    Run only once:
+    ![image](https://user-images.githubusercontent.com/760399/209583694-3c7d5387-6ff5-4489-aa69-ee752a9be690.png)
+    Then after 10s, connections immdiatly disapear.
+    
+    Run with pool, only once:
+    ![image](https://user-images.githubusercontent.com/760399/209583836-84db0328-1b86-4a98-b4e8-520464801793.png)
+    10 idle connections die only after killed the process.
+
+    
+    
+    
+
