@@ -52,7 +52,8 @@
 3. Played pruning extra connections beyond Minimum Pool Size
    `Minimum Pool Size=5;Connection Idle Lifetime=5;Connection Pruning Interval=2;`
    
-
+   > Condition: DbContext Dispose AND No Dispose  
+   
    As I started 10 tasks keeping alive connections for 10 sec.
    after 10 sec + 5 sec, 5 extra connections are pruned  
    Pool keep 5 connections:
