@@ -8,18 +8,21 @@ DB driver: https://www.npgsql.org/doc/index.html
 DbContext without dispose, connection are immedialy closed.  
 DbContext with dispose, connection state depends on pool is used or not, see below.  
 
-## Within Unit test
+## Some Tests
+> **ALL Below Without DbContext dipose**
+
+
+### Within Unit test
    `TestConnectionPool`  
    DbContext not disposed, but connection still closed !
 
-## Within an long running process
+### Within an long running process
 > Turn ON/OFF connection pool with `appsettings`: bool `DbCnxPooling`.  
 
-### No Connection Pool 
-   > DbContext as a permanent memory resident, no dispose, do loop select -> connection closed after each query
-   
+#### No Connection Pool 
+      
    1. Sequential queries in loop.  `SequentialQueryDB`  
-      Without DbContext dipose, always only one connection.  
+      , always only one connection.  
       
       ![image](https://user-images.githubusercontent.com/760399/209582043-b85c3ec3-2e70-40a8-aa19-9948daf34216.png)
 
@@ -63,8 +66,8 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
     
     ![image](https://user-images.githubusercontent.com/760399/209585695-c337deae-5985-4cad-94f7-4f42fb42f6f6.png)
 
-    
-## With Connection Pool
+
+#### With Connection Pool
    `ParallelQueryDb`  
    Played pruning extra connections beyond Minimum Pool Size.  
    `Minimum Pool Size=5;Connection Idle Lifetime=5;Connection Pruning Interval=2;`  
