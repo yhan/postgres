@@ -9,7 +9,7 @@ DbContext without dispose, connection are immedialy closed.
 DbContext with dispose, connection state depends on pool is used or not, see below.  
 
 ## Some Tests
-> **ALL Below Without DbContext dipose**
+> **ALL Below Without DbContext dipose**. Code under https://github.com/yhan/postgres/tree/main/src
 
 
 ### Within Unit test
