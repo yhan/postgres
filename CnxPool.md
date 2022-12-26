@@ -1,3 +1,13 @@
+
+# Postgres
+Environment:  
+Postgres v15  
+DB driver: https://www.npgsql.org/doc/index.html  
+
+##  Conclusion
+DbContext without dispose, connection are immedialy closed.  
+DbContext with dispose, connection state depends on pool is used or not, see below.  
+
 ## Within Unit test
    `TestConnectionPool`  
    DbContext not disposed, but connection still closed !
