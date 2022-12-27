@@ -153,37 +153,68 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
 ## How connection got closed/returned to pool
 
 
-```csharp
+1. Read
 
-[HttpGet("Close")]
-public int Close()
-{
-     //context registered as a singleton
-     return context.MarketOrderVms.Count();
-}
-    
-```
+   ```csharp
 
+   [HttpGet("Close")]
+   public int Close()
+   {
+        //context registered as a singleton
+        return context.MarketOrderVms.Count();
+   }
 
-```
-NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 782
-NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 758
-RelationalConnection.CloseDbConnection() //EF CORE
-RelationalConnection.Close()
-RelationalDataReader.Dispose()
-SingleQueryingEnumerable<int>.Enumerator.Dispose()
-Enumerable.TryGetSingle<int>()
-Enumerable.Single<int>()
-[Lightweight Method Call]
-QueryCompiler.Execute<int>()
-EntityQueryProvider.Execute<int>()
-Queryable.Count<Common.MarketOrderVm>()
-CnxPoolController.Close()
-```
-
-`Enumerable.TryGetSingle<int>()`:  
-https://github.com/dotnet/runtime/blob/ebba1d4acb7abea5ba15e1f7f69d1d1311465d16/src/libraries/System.Linq/src/System/Linq/Single.cs#L120  
+   ```
 
 
-`RelationalConnection.CloseDbConnection()`:  
-https://github.com/dotnet/efcore/blob/e78f0d48f94fab2e78a16701e2aa6b0059aa8ee5/src/EFCore.Relational/Storage/RelationalConnection.cs#L887  
+   ```
+   NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 782
+   NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 758
+   RelationalConnection.CloseDbConnection() //EF CORE
+   RelationalConnection.Close()
+   RelationalDataReader.Dispose()
+   SingleQueryingEnumerable<int>.Enumerator.Dispose()
+   Enumerable.TryGetSingle<int>()
+   Enumerable.Single<int>()
+   [Lightweight Method Call]
+   QueryCompiler.Execute<int>()
+   EntityQueryProvider.Execute<int>()
+   Queryable.Count<Common.MarketOrderVm>()
+   CnxPoolController.Close()
+   ```
+
+   `Enumerable.TryGetSingle<int>()`:  
+   https://github.com/dotnet/runtime/blob/ebba1d4acb7abea5ba15e1f7f69d1d1311465d16/src/libraries/System.Linq/src/System/Linq/Single.cs#L120  
+
+
+   `RelationalConnection.CloseDbConnection()`:  
+   https://github.com/dotnet/efcore/blob/e78f0d48f94fab2e78a16701e2aa6b0059aa8ee5/src/EFCore.Relational/Storage/RelationalConnection.cs#L887  
+   
+2. Write
+
+
+   ```csharp
+   [HttpGet("WriteAndClose")]
+    public void WriteAndClose()
+    {
+        context.MarketOrderVms.AddRange(new Generator().Execute());
+        context.SaveChanges();
+    }
+   ```
+
+   ```
+   RelationalConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\20c132316f9f203a2868f88ac266cb785c1b298491352ce0e7c5ec23c820e4d3\RelationalConnection.cs:line 865
+   RelationalDataReader.Dispose()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\8ba9ab14678cb93a3fac93994b4f5f345bd3438420205057eec9d0dce8cc31fe\RelationalDataReader.cs:line 183
+   ReaderModificationCommandBatch.Execute()
+   BatchExecutor.Execute()
+   RelationalDatabase.SaveChanges()
+   StateManager.SaveChanges()
+   StateManager.SaveChanges()
+   StateManager.<>c.<SaveChanges>b__107_0()
+   NpgsqlExecutionStrategy.Execute<(Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager, bool), int>()
+   StateManager.SaveChanges()
+   DbContext.SaveChanges()
+   DbContext.SaveChanges()
+   CnxPoolController.WriteAndClose()
+   ```
+
