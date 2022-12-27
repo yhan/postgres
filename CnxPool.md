@@ -166,17 +166,24 @@ public int Close()
 
 
 ```
-RelationalConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\20c132316f9f203a2868f88ac266cb785c1b298491352ce0e7c5ec23c820e4d3\RelationalConnection.cs:line 865
+NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 782
+NpgsqlConnection.Close()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\58e753b49452a9b2ca6a4a8ffb5fdf4e88633db5cdc6516141328567148779\NpgsqlConnection.cs:line 758
+RelationalConnection.CloseDbConnection() //EF CORE
+RelationalConnection.Close()
 RelationalDataReader.Dispose()
-SingleQueryingEnumerable<int>.Enumerator.Dispose()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\7b3b6985aad11c5d633d75b545f5f5f4fc7e50918ad1cb9f6b615682f5bfb76d\SingleQueryingEnumerable.cs:line 263
-Enumerable.TryGetSingle<int>()at C:\Users\hanyi\AppData\Roaming\JetBrains\Rider2022.3\resharper-host\SourcesCache\bd55fb26296f9ba7a688ddc8a1b7add6c71c28f1f4f0e4e4e4fad8bccf518ea6\Single.cs:line 100
+SingleQueryingEnumerable<int>.Enumerator.Dispose()
+Enumerable.TryGetSingle<int>()
 Enumerable.Single<int>()
 [Lightweight Method Call]
 QueryCompiler.Execute<int>()
 EntityQueryProvider.Execute<int>()
 Queryable.Count<Common.MarketOrderVm>()
-CnxPoolController.Close()at C:\yi\repo\postgres\src\API\Controllers\CnxPoolController.cs:line 39
+CnxPoolController.Close()
 ```
 
 `Enumerable.TryGetSingle<int>()`:  
-https://github.com/dotnet/runtime/blob/ebba1d4acb7abea5ba15e1f7f69d1d1311465d16/src/libraries/System.Linq/src/System/Linq/Single.cs#L120
+https://github.com/dotnet/runtime/blob/ebba1d4acb7abea5ba15e1f7f69d1d1311465d16/src/libraries/System.Linq/src/System/Linq/Single.cs#L120  
+
+
+`RelationalConnection.CloseDbConnection()`:  
+https://github.com/dotnet/efcore/blob/e78f0d48f94fab2e78a16701e2aa6b0059aa8ee5/src/EFCore.Relational/Storage/RelationalConnection.cs#L887  
