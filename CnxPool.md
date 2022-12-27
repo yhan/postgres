@@ -88,13 +88,14 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
  
  Taking this "slow motion" example:   
  connection pool has a size of 1,   
- Two identical units of work, UOW-1 and UOW-2  each does:  
-  (1) query1 lasts for 10s  
-  (2) no op during 20s  
-  (3) query2 lasts for 10s  
-  
+ 
 1. **Unit of work NOT in a transaction**   
 
+   Two identical units of work, UOW-1 and UOW-2  each does:  
+   (1) query1 lasts for 10s  
+   (2) no op during **20s**  
+   (3) query2 lasts for 10s  
+  
    UOW-1 and UOW-2 start at the same time. They will compete for the sole connection in the pool.  
    Say UOW-1 wins, during (1), UOW-2 waits until UOW-1:(2) starts
    |   |   |   |   |   |
@@ -104,7 +105,11 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    | UOW-2:  |   | (1)  |  (2) | (3)  |
    |   |   | 10s  |  20s | 10s  |
 
-
+   Another example:  
+   Two identical units of work, UOW-1 and UOW-2 each does:  
+   (1) query1 lasts for 10s  
+   (2) no op during **5s**  
+   (3) query2 lasts for 10s  
    |   |   |   |   |   |
    |---|---|---|---|---|
    | UOW-1:  |  (1)  |   (2)  | (3)   |   |
@@ -113,7 +118,7 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    |   |   | 10s  |  5s | **(10-5)** + 10 s   => during (10-5)s, UOW-2 waits for UOW-1:(3) to be finished  |
  
 
-   ![image](https://user-images.githubusercontent.com/760399/209676968-f5266f1d-3fd8-41cc-9d9b-1460b8323b89.png)
+   ![image](https://user-images.githubusercontent.com/760399/209679978-25d9a2c9-f863-43db-a703-0495ae174c06.png)
 
 
    We can see that Units of work compete and wait, all depends on shared DB Connection's state.  
@@ -135,3 +140,11 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
     **Overall duration:** 50s          
  
  
+### Sum up
+Unit of work in transaction, db connections can not be shared. If 1000 requests arrive at the same time, you will need 1000 connections.
+Unit of work not in transaction, db connections can be shared. If 
+
+ | Unit of work  | db connection can be shared  |  1000 requests arrive at the same time, how many db connections required  |   |   |   |   |   |
+   |---|---|---|---|---|---|---|---|
+   | In a transaction  | NO  | 1000  |  |   |   |   |
+   | Not in a transaction  | YES  | less than 1000  |  |   |   |   |
