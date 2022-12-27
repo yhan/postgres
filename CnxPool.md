@@ -218,3 +218,6 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    CnxPoolController.WriteAndClose()
    ```
 
+
+   `ReaderModificationCommandBatch.Execute`:  
+   https://github.com/dotnet/efcore/blob/e78f0d48f94fab2e78a16701e2aa6b0059aa8ee5/src/EFCore.Relational/Update/ReaderModificationCommandBatch.cs#L346
