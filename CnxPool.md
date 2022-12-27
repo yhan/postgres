@@ -131,7 +131,7 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    |   |   |   |   | 10s  |  5s | 10s  |
    
    
-    **Connection state transition:** `Idle` -> `Active` -> **`Idle in transaction`** -> `Active` -> `Idle`
+    **Connection state transition:** `Idle` -> `Active` -> **`Idle in transaction`** -> `Active` -> `Idle`  
     **Overall duration:** 50s          
  
  
