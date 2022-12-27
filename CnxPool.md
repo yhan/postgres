@@ -92,34 +92,32 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
   (1) query1 lasts for 10s
   (2) no op during 20s
   (3) query2 lasts for 10s
+  
+1. Unit of work NOT in a transaction   
 
-if the unit of work is not in one db transaction
-UOW-1 and UOW-2 start at the same time. They will compete for the sole connection in the pool.  
-Say UOW-1 wins, during (1), UOW-2 waits until UOW-1:(2) starts
-|   |   |   |   |   |
-|---|---|---|---|---|
-| UOW-1:  |  (1)  |   (2)  | (3)   |   |
-|   | 10s  | 20s  |  10s |   |
-| UOW-2:  |   | (1)  |  (2) | (3)  |
-|   |   | 10s  |  20s | 10s  |
+   UOW-1 and UOW-2 start at the same time. They will compete for the sole connection in the pool.  
+   Say UOW-1 wins, during (1), UOW-2 waits until UOW-1:(2) starts
+   |   |   |   |   |   |
+   |---|---|---|---|---|
+   | UOW-1:  |  (1)  |   (2)  | (3)   |   |
+   |   | 10s  | 20s  |  10s |   |
+   | UOW-2:  |   | (1)  |  (2) | (3)  |
+   |   |   | 10s  |  20s | 10s  |
 
- 
- |   |   |   |   |   |
-|---|---|---|---|---|
-| UOW-1:  |  (1)  |   (2)  | (3)   |   |
-|   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes  |   |
-| UOW-2:  |   | (1)  |  (2) | (3)  |
-|   |   | 10s  |  5s | 10s  |
- 
- 
-UOW-1: (1)    (2)    (3)
-       10s    5s     **(10-5)+10 s**   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes
-UOW-2:        (1)    (2)    (3)
-              10s    5s    10s
-              
 
-The compete and wait depends on shared DB Connection's state.  
-if Connection is `Active`, then UOW-x waits, if Connection is `Idle`, then UOW-x can enter.
+   |   |   |   |   |   |
+   |---|---|---|---|---|
+   | UOW-1:  |  (1)  |   (2)  | (3)   |   |
+   |   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes  |   |
+   | UOW-2:  |   | (1)  |  (2) | (3)  |
+   |   |   | 10s  |  5s | 10s  |
+ 
+
+   We can see that Units of work compete and wait, all depends on shared DB Connection's state.  
+   If Connection is `Active`, then UOW-x waits, if Connection is `Idle`, then UOW-x can enter.  
+   Connection state transition: `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`
+
+
               
  
  
