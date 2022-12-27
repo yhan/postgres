@@ -141,8 +141,6 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
  
  
 ### Sum up
-Unit of work in transaction, db connections can not be shared. If 1000 requests arrive at the same time, you will need 1000 connections.
-Unit of work not in transaction, db connections can be shared. If 
 
  | Unit of work  | db connection can be shared  |  1000 requests arrive at the same time, how many db connections required  |   |   |   |   |   |
    |---|---|---|---|---|---|---|---|
