@@ -93,7 +93,7 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
   (2) no op during 20s  
   (3) query2 lasts for 10s  
   
-1. Unit of work NOT in a transaction   
+1. **Unit of work NOT in a transaction**   
 
    UOW-1 and UOW-2 start at the same time. They will compete for the sole connection in the pool.  
    Say UOW-1 wins, during (1), UOW-2 waits until UOW-1:(2) starts
@@ -108,23 +108,30 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    |   |   |   |   |   |
    |---|---|---|---|---|
    | UOW-1:  |  (1)  |   (2)  | (3)   |   |
-   |   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes  |   |
+   |   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) to be finished  |   |
    | UOW-2:  |   | (1)  |  (2) | (3)  |
-   |   |   | 10s  |  5s | **(10-5)** + 10 s   => during (10-5)s, UOW-2 waits for UOW-1:(3) finishes  |
+   |   |   | 10s  |  5s | **(10-5)** + 10 s   => during (10-5)s, UOW-2 waits for UOW-1:(3) to be finished  |
  
+
+   ![image](https://user-images.githubusercontent.com/760399/209676968-f5266f1d-3fd8-41cc-9d9b-1460b8323b89.png)
+
 
    We can see that Units of work compete and wait, all depends on shared DB Connection's state.  
    If Connection is `Active`, then UOW-x waits, if Connection is `Idle`, then UOW-x can enter.  
-   Connection state transition: `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`
+   **Connection state transition:** `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`  
+   **Overall duration:** 40s
 
-2. Unit of work IN a transaction
+2. **Unit of work IN a transaction**
 
    |   |   |   |   |   |   |   |   |
    |---|---|---|---|---|---|---|---|
    | UOW-1:  |  (1)  |   (2)  | (3)   |   |   |   |
-   |   | 10s  | 20s  |  10s |   |   |   |
+   |   | 10s  | 5s  |  10s |   |   |   |
    | UOW-2:  |      |   || (1)  |  (2) | (3)  |
-   |   |   |   |   | 10s  |  20s | 10s  |
-              
+   |   |   |   |   | 10s  |  5s | 10s  |
+   
+   
+    **Connection state transition:** `Idle` -> `Active` -> **`Idle in transaction`** -> `Active` -> `Idle`
+    **Overall duration:** 50s          
  
  
