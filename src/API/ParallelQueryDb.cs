@@ -16,7 +16,7 @@ public class ParallelQueryDb : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Parallel.ForEach(Enumerable.Range(1, 10),
+        Parallel.ForEach(Enumerable.Range(1, 5),
         i => {
             // no DbContext dispose
             var context = factory.CreateDbContext();

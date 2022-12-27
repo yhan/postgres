@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using API;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 using TestProject;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +14,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHostedService<TimeTick>();
-builder.Services.AddHostedService<ParallelQueryDb>();
+//builder.Services.AddHostedService<TimeTick>();
+//builder.Services.AddHostedService<ParallelQueryDb>();
 //builder.Services.AddHostedService<SequentialQueryDB>();
 
 
-var cnxString = CnxString();
+var provider = builder.Services.BuildServiceProvider();
+var config = provider.GetRequiredService<IConfiguration>();
+
+string cnxString = CnxString(config);
 
 builder.Services.AddDbContextFactory<MarketOrdersContext>(optionsBuilder => {
     optionsBuilder.UseNpgsql(cnxString)
@@ -30,9 +35,19 @@ builder.Services.AddDbContext<MarketOrdersContext>(optionsBuilder => {
         .EnableSensitiveDataLogging()
         .LogTo(s => Debug.WriteLine(s));
 },
-ServiceLifetime.Singleton);
+ServiceLifetime.Scoped);
 
-var app = builder.Build();
+// Log.Logger = new LoggerConfiguration()
+//     .ReadFrom.Configuration(config)
+//     .Enrich.WithThreadId()
+//     .CreateLogger();
+
+builder.Host.UseSerilog((ctx, lc) => lc
+        .ReadFrom.Configuration(ctx.Configuration)
+        .Enrich.WithThreadId());
+
+WebApplication app = builder.Build();
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -49,11 +64,8 @@ app.MapControllers();
 
 app.Run();
 
-string CnxString()
+string CnxString(IConfiguration config)
 {
-    var provider = builder.Services.BuildServiceProvider();
-    var config = provider.GetRequiredService<IConfiguration>();
-
     var pooling = bool.Parse(config["DbCnxPooling"]);
     var connectionString = pooling ? config.GetConnectionString("WithPooling") : config.GetConnectionString("WithoutPooling");
     return connectionString;
