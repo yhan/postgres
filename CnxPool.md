@@ -107,7 +107,7 @@ Say UOW-1 wins, during (1), UOW-2 waits until UOW-1:(2) starts
  |   |   |   |   |   |
 |---|---|---|---|---|
 | UOW-1:  |  (1)  |   (2)  | (3)   |   |
-|   | 10s  | 20s  |  5s | **(10-5)+10 s**   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes   |
+|   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes  |   |
 | UOW-2:  |   | (1)  |  (2) | (3)  |
 |   |   | 10s  |  5s | 10s  |
  
