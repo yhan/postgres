@@ -80,18 +80,18 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    ![image](https://user-images.githubusercontent.com/760399/209584905-4fea0505-62d3-4d09-abc1-613ea1211dfe.png)
 
  ## Connection pool
- What we want: 1000 requests, only several connections are opened (say 10).  
- In other words, we expect that 1000 requests can share 10 db conections.  
+ What we want: 1000 requests, only several connections are opened (say 10).   
+ In other words, we expect that 1000 requests can share 10 db conections.   
  
- Each request triggers a unit of work. Each unit of work does 12 operations using DbContext.
+ Each request triggers a unit of work. Each unit of work does 12 operations using DbContext.  
  
  
- Taking this "slow motion" example:  
- connection pool has a size of 1,  
- Two identical units of work, UOW-1 and UOW-2  each do:
-  (1) query1 lasts for 10s
-  (2) no op during 20s
-  (3) query2 lasts for 10s
+ Taking this "slow motion" example:   
+ connection pool has a size of 1,   
+ Two identical units of work, UOW-1 and UOW-2  each does:  
+  (1) query1 lasts for 10s  
+  (2) no op during 20s  
+  (3) query2 lasts for 10s  
   
 1. Unit of work NOT in a transaction   
 
@@ -110,14 +110,21 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    | UOW-1:  |  (1)  |   (2)  | (3)   |   |
    |   | 10s  | 5s  | **(10-5)** + 10 s   => during (10-5)s, UOW-1 waits for UOW-2:(1) finishes  |   |
    | UOW-2:  |   | (1)  |  (2) | (3)  |
-   |   |   | 10s  |  5s | 10s  |
+   |   |   | 10s  |  5s | **(10-5)** + 10 s   => during (10-5)s, UOW-2 waits for UOW-1:(3) finishes  |
  
 
    We can see that Units of work compete and wait, all depends on shared DB Connection's state.  
    If Connection is `Active`, then UOW-x waits, if Connection is `Idle`, then UOW-x can enter.  
    Connection state transition: `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`
 
+2. Unit of work IN a transaction
 
+   |   |   |   |   |   |   |   |   |
+   |---|---|---|---|---|---|---|---|
+   | UOW-1:  |  (1)  |   (2)  | (3)   |   |   |   |
+   |   | 10s  | 20s  |  10s |   |   |   |
+   | UOW-2:  |      |   || (1)  |  (2) | (3)  |
+   |   |   |   |   | 10s  |  20s | 10s  |
               
  
  
