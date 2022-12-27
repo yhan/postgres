@@ -123,7 +123,7 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
 
    We can see that Units of work compete and wait, all depends on shared DB Connection's state.  
    If Connection is `Active`, then UOW-x waits, if Connection is `Idle`, then UOW-x can enter.  
-   **Connection state transition:** `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`  
+   **Connection state transition:** `Idle` -> `Active` -> `Idle` -> `Active` -> `Idle`.
    **Overall duration:** 40s
 
 2. **Unit of work IN a transaction**
@@ -137,6 +137,8 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    
    
     **Connection state transition:** `Idle` -> `Active` -> **`Idle in transaction`** -> `Active` -> `Idle`  
+    During **`Idle in transaction`**, contrary to `Idle`, the connection can't be shared. 
+    
     **Overall duration:** 50s          
  
  
