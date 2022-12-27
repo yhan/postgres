@@ -79,7 +79,7 @@ DbContext with dispose, connection state depends on pool is used or not, see bel
    Pool keep 5 connections:
    ![image](https://user-images.githubusercontent.com/760399/209584905-4fea0505-62d3-4d09-abc1-613ea1211dfe.png)
 
- ## Connection pool
+ ## Connection pool in Unit of work
  What we want: 1000 requests, only several connections are opened (say 10).   
  In other words, we expect that 1000 requests can share 10 db conections.   
  
